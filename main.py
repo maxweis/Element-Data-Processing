@@ -23,14 +23,14 @@ def row1_data(file_lines):
     return file_lines[0].split()[3][:-1]
 
 def col_b_data(file_lines):
-    return ["total mass of unit", "burnup(days)"] + file_lines[5].replace("e", "E").split() #e replacement because notation
+    return ["total mass of unit", "burnup(days)"] + file_lines[5].split() #e replacement because notation
 
 #get element data for columns
 def get_col_element_data(file_lines, element):
     output = []
     for line in file_lines[6:]:
         if line.split()[0][:len(element)] == element:
-            output = output + [line.strip().replace("e", "E").split()] #e replacement because notation
+            output = output + [line.strip().split()] #e replacement because notation
     output[0] = [row1_data(file_lines)] + output[0]
 
     return output
@@ -50,17 +50,28 @@ def main():
         file_lines = get_file_lines(data_file)
         if i == 0:
             col_b = col_b_data(file_lines)
+
             for row in range(len(col_b)):
-                sheet1.cell(column=2, row=1+row, value=col_b[row])
+                try:
+                    value = float(col_b[row])
+                except ValueError:
+                    value = col_b[row]
+
+                sheet1.cell(column=2, row=1+row, value=value)
 
         #set other columns
         col_element_data = get_col_element_data(file_lines, ELEMENT)
         for col in range(len(col_element_data)):
             for row in range(len(col_element_data[col])):
-                if (col == 0):
-                    sheet1.cell(column=3+col+current_column, row=1+row, value=col_element_data[col][row])
+                try:
+                    value = float(col_element_data[col][row])
+                except ValueError:
+                    value = col_element_data[col][row]
+
+                if col == 0:
+                    sheet1.cell(column=3+col+current_column, row=1+row, value=value)
                 else:
-                    sheet1.cell(column=3+col+current_column, row=2+row, value=col_element_data[col][row])
+                    sheet1.cell(column=3+col+current_column, row=2+row, value=value)
         current_column += len(col_element_data)
     wb.save(filename=OUTPUT_FILE)
     
