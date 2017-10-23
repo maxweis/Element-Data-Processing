@@ -27,7 +27,10 @@ def row1_data(file_lines):
     return file_lines[0].split()[3][:-1]
 
 def col_b_data(file_lines):
-    return ["total mass of unit", "burnup(days)"] + file_lines[5].split()
+    return ["", "burnup(days)"] + file_lines[5].split() + ["total mass of unit"]
+
+def get_total_unit_mass(file_lines):
+    return file_lines[-1].split()[-1]
 
 #get element data for columns
 def get_col_element_data(file_lines, element):
@@ -35,7 +38,7 @@ def get_col_element_data(file_lines, element):
     for line in file_lines[6:]:
         if line.split()[0][:len(element)] == element:
             output = output + [line.strip().split()]
-    output[0] = [row1_data(file_lines)] + output[0]
+    output[0] = [row1_data(file_lines)] + output[0] + [get_total_unit_mass(file_lines)]
 
     return output
 
@@ -63,7 +66,7 @@ def main():
                 except ValueError:
                     value = col_b[row]
 
-                sheet1.cell(column=2, row=1+row, value=value)
+                sheet1.cell(column=1, row=1+row, value=value)
 
         #set other columns
         col_element_data = get_col_element_data(file_lines, ELEMENT)
@@ -75,9 +78,9 @@ def main():
                     value = col_element_data[col][row]
 
                 if col == 0:
-                    sheet1.cell(column=3+col+current_column, row=1+row, value=value)
+                    sheet1.cell(column=2+col+current_column, row=1+row, value=value)
                 else:
-                    sheet1.cell(column=3+col+current_column, row=2+row, value=value)
+                    sheet1.cell(column=2+col+current_column, row=2+row, value=value)
         current_column += len(col_element_data)
     wb.save(filename=OUTPUT_FILE)
     
