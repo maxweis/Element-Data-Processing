@@ -5,9 +5,6 @@ from openpyxl.compat import range
 from openpyxl.utils import get_column_letter
 import os
 
-#TODO
-# add total
-
 #sorts through data in given format from files in current directory with the
 #defined file extension, searches for defined element isotopes
 DATA_FILE_EXTENSION = ".plt"
