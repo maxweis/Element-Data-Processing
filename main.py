@@ -1,3 +1,5 @@
+#Written by Max Weis (maxrobweis@gmail.com)
+
 from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.utils import get_column_letter
@@ -5,7 +7,6 @@ import os
 
 #TODO
 # add total
-# fix ordering 
 
 #sorts through data in given format from files in current directory with the
 #defined file extension, searches for defined element isotopes
@@ -16,9 +17,6 @@ OUTPUT_FILE = ELEMENT + " raw data.xlsx"
 #sort through a list of files, return files with the given extension
 def sort_file_extensions(files, extension):
     return [i for i in files if i[-len(extension):] == extension]
-
-# def file_numeric_sort(files):
-    # for filename in files:
 
 def get_file_lines(filename):
     with open(filename, "r") as open_file: #open file to read and close when donw
@@ -47,11 +45,13 @@ def main():
     sheet1 = wb.active
     sheet1.title = ELEMENT + " raw data"
 
-    directory_files = sorted(os.listdir("./")) #get files in current directory
+    directory_files = os.listdir("./")
+    directory_files = sort_file_extensions(directory_files, DATA_FILE_EXTENSION) #get files with desired extension
+    directory_files.sort(key=lambda x: int(x.split(".")[1])) #sort files by numerical order for listing in row 1
 
     current_column = 0
 
-    for i, data_file in enumerate(sort_file_extensions(directory_files, DATA_FILE_EXTENSION)):
+    for i, data_file in enumerate(directory_files):
         #set column b
         file_lines = get_file_lines(data_file)
         if i == 0:
@@ -81,6 +81,5 @@ def main():
         current_column += len(col_element_data)
     wb.save(filename=OUTPUT_FILE)
     
-#execute main function if run as a program
 if __name__ == "__main__":
     main()
