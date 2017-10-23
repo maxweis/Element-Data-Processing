@@ -11,7 +11,7 @@ import os
 #sorts through data in given format from files in current directory with the
 #defined file extension, searches for defined element isotopes
 DATA_FILE_EXTENSION = ".plt"
-ELEMENT = "am"
+ELEMENT = "pu"
 OUTPUT_FILE = ELEMENT + " raw data.xlsx"
 
 #sort through a list of files, return files with the given extension
